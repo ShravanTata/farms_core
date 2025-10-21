@@ -57,6 +57,7 @@ class LinkOptions(Options):
         self.name: str = kwargs.pop('name')
         self.collisions: bool = kwargs.pop('collisions')
         self.friction: List[float] = kwargs.pop('friction')
+        self.sites: List[SiteOptions] = kwargs.pop('sites', [])
         self.extras: Dict = kwargs.pop('extras', {})
         if kwargs:
             raise Exception(f'Unknown kwargs: {kwargs}')
@@ -288,6 +289,47 @@ class ArenaOptions(ModelOptions):
         self.ground_height = ground_height
 
 
+class SiteOptions(Options):
+    """ Add reference markers for motion tracking
+
+    Parameters
+    ----------
+    name : str
+        The name identifier for the object.
+    shape : str [sphere, capsule, ellipsoid, cylinder, box], “sphere”
+        The geometric shape type of the object.
+    size: list[float] [0.005 0.005 0.005]
+        Sizes of the geometric shape representing the site.
+    pos : list[float]
+        The 3D position coordinates [x, y, z] of the object.
+    quat : list[float]
+        The orientation quaternion [w, x, y, z] or [x, y, z, w]
+        representing the object's rotation.
+    rgba : list[float] or None, optional
+        The color and opacity values [r, g, b, a] in range [0, 1].
+        If None, a default color will be used. Default is None.
+    """
+
+    def __init__(
+            self,
+            name: str,
+            shape: str,
+            size: list[float],
+            pos: list[float],
+            quat: list[float],
+            rgba: Union[list[float], None] = None,
+    ):
+        super().__init__()
+        self.name = name
+        self.shape = shape
+        self.size = size
+        self.pos = pos
+        self.quat = quat
+        if rgba is None:
+            self.rgba = [1.0, 0.0, 0.0, 1.0]
+        else:
+            assert len(rgba) == 4
+            self.rgba = rgba
 class MuscleOptions(Options):
     """ Muscle Options """
 
