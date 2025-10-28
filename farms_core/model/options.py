@@ -1,6 +1,6 @@
 """Animat options"""
 
-from enum import IntEnum
+from enum import Enum, IntEnum
 from typing import List, Dict, Union
 from ..options import Options
 
@@ -330,6 +330,69 @@ class SiteOptions(Options):
         else:
             assert len(rgba) == 4
             self.rgba = rgba
+
+
+# TRANSMISSION OPTIONS
+# Not using StrEnum until Python 3.10 EOL
+class TendonType(str, Enum):
+    FIXED = 'fixed'
+    SPATIAL = 'spatial'
+
+
+class TendonOptions(Options):
+    """ Transmission Options """
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.name: str = kwargs.pop('name')
+        self.type: TendonType = kwargs.pop('type')
+
+
+class FixedTendonJointOptions(Options):
+    """ Fixed Tendon Joint Options """
+
+    def __init__(self, joint: str, coeff: float):
+        self.joint = joint
+        self.coeff = coeff
+
+
+class FixedTendonOptions(TendonOptions):
+    """ Fixed tendon that acts on a joints  """
+
+    def __init__(self, **kwargs):
+        name = kwargs.pop('name')
+        super().__init__(name=name, type=TendonType.FIXED.value)
+        # Each entry: {'name': 'joint1', 'coeff': 1.0}
+        self.joints: List[FixedTendonJointOptions] = kwargs.pop('joints')
+
+
+class SpatialTendonPathOptions(Options):
+    """ Spatial tendon path options """
+
+    def __init__(self, link: str, pos: List[float]):
+        super().__init__()
+        self.link = link
+        self.pos = pos
+
+
+class SpatialTendonOptions(TendonOptions):
+    """ Spatial Tendons """
+
+    def __init__(
+            self,
+            name: str,
+            path: List[SpatialTendonPathOptions],
+            len_range: List[float] = None
+    ):
+        super().__init__(name=name, type=TendonType.SPATIAL.value)
+        # Each entry: {'link': 'femur', 'pos': [0.01, 0.02, 0.03]}
+        self.path = path
+        # Required if using MuJoCo Hill model
+        self.len_range = len_range
+        # For next iteration
+        # self.geoms: List[str] = None   # Wrapping object
+
+
 class MuscleOptions(Options):
     """ Muscle Options """
 
