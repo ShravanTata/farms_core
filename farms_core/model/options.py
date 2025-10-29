@@ -29,6 +29,12 @@ class MorphologyOptions(Options):
             if all(isinstance(joint, JointOptions) for joint in joints)
             else [JointOptions(**joint) for joint in joints]
         )
+        tendons = kwargs.pop('tendons', [])
+        self.tendons: List[TendonOptions] = (
+            tendons
+            if all(isinstance(tendon, TendonOptions) for tendon in tendons)
+            else [TendonOptions.from_options(**tendon) for tendon in tendons]
+        )
         if kwargs:
             raise Exception(f'Unknown kwargs: {kwargs}')
 
@@ -40,6 +46,10 @@ class MorphologyOptions(Options):
         """Joints names"""
         return [joint.name for joint in self.joints]
 
+    def tendons_names(self) -> List[str]:
+        """Tendons names"""
+        return [tendon.name for tendon in self.tendons]
+
     def n_joints(self) -> int:
         """Number of joints"""
         return len(self.joints)
@@ -47,6 +57,10 @@ class MorphologyOptions(Options):
     def n_links(self) -> int:
         """Number of links"""
         return len(self.links)
+
+    def n_tendons(self) -> int:
+        """ Number of tendons """
+        return len(self.tendons)
 
 
 class LinkOptions(Options):
