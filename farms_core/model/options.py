@@ -349,6 +349,8 @@ class SiteOptions(Options):
 # TRANSMISSION OPTIONS
 # Not using StrEnum until Python 3.10 EOL
 class TendonType(str, Enum):
+    """Refer to MuJoCo docs for information about the tendon description and convention
+    https://mujoco.readthedocs.io/en/stable/computation/index.html#actuation-model"""
     FIXED = 'fixed'
     SPATIAL = 'spatial'
 
