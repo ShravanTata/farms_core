@@ -413,23 +413,42 @@ class MuscleOptions(Options):
     """ Muscle Options """
 
     def __init__(self, **kwargs):
+class MuscleFrcDynOptions(Options):
+    """ Muscle Dynamics Options """
+
+    def __init__(self, model: MuscleFrcDynTypes):
+        self.model = model
+
+
+class MuscleActDynOptions(Options):
+    """ Muscle activation dynamics """
+
+    def __init__(
+            self,
+            act_tconst: float,
+            deact_tconst: float,
+            init_act: float = 0.0
+    ):
         super().__init__()
-        self.name: str = kwargs.pop('name')
-        self.model: str = kwargs.pop('model')
-        # muscle properties
-        self.max_force: float = kwargs.pop('max_force')
-        self.optimal_fiber: float = kwargs.pop('optimal_fiber')
-        self.tendon_slack: float = kwargs.pop('tendon_slack')
-        self.max_velocity: float = kwargs.pop('max_velocity')
-        self.pennation_angle: float = kwargs.pop('pennation_angle')
-        self.lmtu_min: float = kwargs.pop('lmtu_min')
-        self.lmtu_max: float = kwargs.pop('lmtu_max')
-        self.waypoints: List[List] = kwargs.pop('waypoints')
-        self.act_tconst: float = kwargs.pop('act_tconst', 0.001)
-        self.deact_tconst: float = kwargs.pop('deact_tconst', 0.001)
-        self.lmin: float = kwargs.pop(
-            'lmin',
-            self.lmtu_min-self.tendon_slack/self.optimal_fiber
+
+        self.act_tconst: float = act_tconst
+        self.deact_tconst: float = deact_tconst
+        self.init_act = init_act
+
+    @classmethod
+    def defaults(cls):
+        """ Defaults """
+        act_tconst = 0.01       # 10ms
+        deact_tconst = 0.04     # 40ms
+        return cls(act_tconst=act_tconst, deact_tconst=deact_tconst)
+
+
+class MuscleSensorDynOptions(Options):
+    """ Muscle sensor dynamics options """
+
+    def __init__(self, model: MuscleFrcDynTypes):
+        self.model = model
+
         )
         self.lmax: float = kwargs.pop(
             'lmax',
